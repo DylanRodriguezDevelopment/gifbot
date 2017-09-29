@@ -58,12 +58,12 @@ function botTag(botId) {
 
 //posts message
 function gifTag(botId) {
-  request('https://api.giphy.com/v1/gifs/translate?s=' + message.substring(1).trim() + '&api_key=dc6zaTOxFJmzC&rating=r', function (error, response, body) {
+  request('http://api.gifme.io/v1/search?query=' + message.substring(1).trim() + '&sfw=false&key=rX7kbMzkGu7WJwvG=', function (error, response, body) {
   parsedData = JSON.parse(body);
   
-  if (!error && response.statusCode == 200 && parsedData && parsedData.data.images) {
-	botResponse = parsedData.data.images.downsized.url;
-	deets = ('gif size: ' + String(Math.ceil(parsedData.data.images.downsized.size/1000)).replace(/(.)(?=(\d{3})+$)/g,'$1,') + 'kB');
+  if (!error && response.statusCode == 200 && parsedData && parsedData.data.link) {
+	botResponse = parsedData.data.link;
+	deets = ('gif size: ' + String(Math.ceil(parsedData.data.link.downsized.size/1000)).replace(/(.)(?=(\d{3})+$)/g,'$1,') + 'kB');
 	postMessage(botResponse, botId);
   } else {
   console.log(message + ' is invalid');
