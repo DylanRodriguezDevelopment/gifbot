@@ -61,9 +61,9 @@ function gifTag(botId) {
   request('http://api.gifme.io/v1/search?query=' + message.substring(1).trim() + '&sfw=false&key=rX7kbMzkGu7WJwvG=', function (error, response, body) {
   parsedData = JSON.parse(body);
   
-  if (!error && response.statusCode == 200 && parsedData && parsedData.data.link) {
+  if (!error && response.statusCode == 200 && parsedData) {
 	botResponse = parsedData.data.link;
-	deets = ('gif size: ' + String(Math.ceil(parsedData.data.link.downsized.size/1000)).replace(/(.)(?=(\d{3})+$)/g,'$1,') + 'kB');
+	deets = ('gif size: ' + String(Math.ceil(parsedData.downsized.size/1000)).replace(/(.)(?=(\d{3})+$)/g,'$1,') + 'kB');
 	postMessage(botResponse, botId);
   } else {
   console.log(message + ' is invalid');
