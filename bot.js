@@ -72,7 +72,7 @@ function gifTag(botId)
 
     if (!error && response.statusCode == 200)
     {
-	     botResponse =   parsedData.data.link;
+	     botResponse =   parsedData.root.data[0].link;
        deets = ('gif size: ' + String(Math.ceil(parsedData.downsized.size/1000)).replace(/(.)(?=(\d{3})+$)/g,'$1,') + 'kB');
 	     postMessage(botResponse, botId);
     }
