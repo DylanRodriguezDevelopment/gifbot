@@ -78,7 +78,7 @@ function gifTag(botId) {
 //posts message
 function gifTag(botId)
 {
-  request('http://api.gifme.io/v1/random?term=' + message.substring(1).trim() + '&sfw=false&key=rX7kbMzkGu7WJwvG', function (error, response, body)
+  request('http://api.gifme.io/v1/search?query=' + message.substring(1).trim() + '&sfw=false&key=rX7kbMzkGu7WJwvG', function (error, response, body)
   {
     parsedData = JSON.parse(body);
 
