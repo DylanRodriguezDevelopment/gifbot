@@ -72,13 +72,13 @@ function gifTag(botId)
 
     if (!error && response.statusCode == 200)
     {
-	     botResponse =   parsedData.root.data[0].link;
-       deets = ('gif size: ' + String(Math.ceil(parsedData.downsized.size/1000)).replace(/(.)(?=(\d{3})+$)/g,'$1,') + 'kB');
-	     postMessage(botResponse, botId);
+     	botResponse = parsedData.root.data[0].link;
+     	deets = ("Is a Gif");
+     	postMessage(botResponse, botId);
     }
     else
     {
-      console.log(message + ' is invalid');
+     	console.log(message + ' is invalid');
     }
   } );
 }
