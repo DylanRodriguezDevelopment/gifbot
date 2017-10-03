@@ -8,8 +8,7 @@ var botIdAlt = process.env.botIdAlt;
 
 
 //processes incoming groupme posts
-function respond()
-{
+function respond() {
   var post = JSON.parse(this.req.chunks[0]);
   this.res.writeHead(200);
   botId = '1';
@@ -18,40 +17,34 @@ function respond()
   message = post.text;
 
   //From the main group?
-  if (sendingGroup == groupIdMain)
-  {
+  if (sendingGroup == groupIdMain) {
     botId = botIdMain;
   }
-
+  
   //from the alt group?
-  if (sendingGroup == groupIdAlt)
-  {
+  if (sendingGroup == groupIdAlt) {
     botId = botIdAlt;
   }
-
+  
   //from an unrecognized group?
-  if (botId == '1')
-  {
+  if (botId == '1') {
     console.log(message + ' sent without a valid group id from: ' + sendingGroup);
   }
 
   //Was the bot tagged?
-  if (message.indexOf('@' + botName) >= 0 && botId !== '1')
-  {
+  if (message.indexOf('@' + botName) >= 0 && botId !== '1') {
     botTag(botId);
   }
 
   //GIF #
-  if (message.substring(0,1) == '#' && botId !== '1')
-  {
+  if (message.substring(0,1) == '#' && botId !== '1') {
     gifTag(botId);
   }
 
   //STOCK TICKER $
-  if (message.substring(0,1) == '$' && botId !== '1')
-  {
+  if (message.substring(0,1) == '$' && botId !== '1') {
     stockTag(botId);
-  }
+  }  
   console.log(sendingUser + ' : ' + message);
   this.res.end();
 }
@@ -63,6 +56,25 @@ function botTag(botId) {
   postMessage(botResponse, botId);
 }
 
+/*
+
+//posts message(from original)
+function gifTag(botId) {
+  request('https://api.giphy.com/v1/gifs/translate?s=' + message.substring(1).trim() + '&api_key=dc6zaTOxFJmzC&rating=r', function (error, response, body) {
+  parsedData = JSON.parse(body);
+  
+  if (!error && response.statusCode == 200 && parsedData && parsedData.data.images) {
+	botResponse = parsedData.data.images.downsized.url;
+	deets = ('gif size: ' + String(Math.ceil(parsedData.data.images.downsized.size/1000)).replace(/(.)(?=(\d{3})+$)/g,'$1,') + 'kB');
+	postMessage(botResponse, botId);
+  } else {
+  console.log(message + ' is invalid');
+  }
+  });
+}
+
+*/
+
 //posts message
 function gifTag(botId)
 {
@@ -72,7 +84,7 @@ function gifTag(botId)
 
     if (!error && response.statusCode == 200)
     {
-     	botResponse = parsedData.root.data[0].link;
+     	botResponse = parsedData.data[0].link;
      	deets = ("Is a Gif");
      	postMessage(botResponse, botId);
     }
@@ -84,44 +96,36 @@ function gifTag(botId)
 }
 
 //posts message
-function stockTag(botId)
-{
+function stockTag(botId) {
   request('https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yahoo.finance.quotes%20where%20symbol%20in%20(%22' + message.substring(1).trim() + '%22)&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=', function (error, response, body) {
   parsedData = JSON.parse(body);
-  if (parsedData.query.results.quote.Name == undefined || parsedData.query.results.quote.Name == null)
-  {
-	   console.log(message + ' is invalid');
-  }
-  else
-  {
-    companyName = String(parsedData.query.results.quote.Name);
-    companyName = companyName.substring(0,15);
-    deets = companyName;
-    lastPrice = Number((parseFloat(parsedData.query.results.quote.LastTradePriceOnly)).toFixed(2));
-    change = Number((parseFloat(parsedData.query.results.quote.PercentChange)).toFixed(2));
-
-  if (change > 0)
-  {
+  if (parsedData.query.results.quote.Name == undefined || parsedData.query.results.quote.Name == null) {
+	console.log(message + ' is invalid');
+  } else {
+  companyName = String(parsedData.query.results.quote.Name);
+  companyName = companyName.substring(0,15);
+  deets = companyName;
+  lastPrice = Number((parseFloat(parsedData.query.results.quote.LastTradePriceOnly)).toFixed(2));
+  change = Number((parseFloat(parsedData.query.results.quote.PercentChange)).toFixed(2));
+  if (change > 0) {
     change = String('+' + change);
   }
-    botResponse = (companyName + '\n$' + lastPrice + ' / ' + change + '\n' + 'www.finance.yahoo.com/quote/' + message.substring(1).trim());
-    postMessage(botResponse, botId);
-  }
-
-  });
+  botResponse = (companyName + '\n$' + lastPrice + ' / ' + change + '\n' + 'www.finance.yahoo.com/quote/' + message.substring(1).trim());
+  postMessage(botResponse, botId);  } 
+  }); 
 }
 
 //posts message
-function postMessage(botResponse, botId)
-{
+function postMessage(botResponse, botId) {
+  
+
   var options, botReq;
   options = {
-
     hostname: 'api.groupme.com',
     path: '/v3/bots/post',
     method: 'POST',
     "bot_id" : botId,
-    "text" : botResponse
+    "text" : botResponse 
   };
 
   botReq = https.request(options, function(res) {
